@@ -4,13 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>내 첫번째 아이디어</title>
-  <meta name="description" content="화면 중앙에 아름답게 빛나는 내 첫번째 아이디어를 만나보세요.">
+  <title>오늘도 힘내세요</title>
+  <meta name="description" content="화면 중앙에 아름답게 빛나는 오늘도 힘내세요를 만나보세요.">
 
   <!-- SEO & Favicon (Fallback to beautiful design) -->
 
-  <meta property="og:title" content="내 첫번째 아이디어">
-  <meta property="og:description" content="화면 중앙에 아름답게 빛나는 내 첫번째 아이디어를 만나보세요.">
+  <meta property="og:title" content="오늘도 힘내세요">
+  <meta property="og:description" content="화면 중앙에 아름답게 빛나는 오늘도 힘내세요를 만나보세요.">
   <meta property="og:type" content="website">
 
   <!-- Pretendard Font for premium Korean typography -->
@@ -22,27 +22,59 @@
 
   <style>
     :root {
-      --bg-color: #080710;
-      --card-bg: rgba(255, 255, 255, 0.03);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --text-color: #f3f4f6;
-      --text-muted: rgba(243, 244, 246, 0.6);
-      --accent-gradient: linear-gradient(135deg, #a78bfa, #f472b6, #60a5fa);
-      --glow-color: rgba(167, 139, 250, 0.25);
-      --shadow-color: rgba(0, 0, 0, 0.5);
-      --toast-bg: rgba(255, 255, 255, 0.1);
+      --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      --card-bg: rgba(255, 255, 255, 0.45);
+      --card-border: rgba(255, 255, 255, 0.6);
+      --text-color: #1e293b;
+      --text-muted: #475569;
+      --accent-gradient: linear-gradient(135deg, #4f46e5, #6366f1);
+      --glow-color: rgba(99, 102, 241, 0.15);
+      --shadow-color: rgba(15, 23, 42, 0.05);
+      --toast-bg: rgba(15, 23, 42, 0.9);
+      --toast-color: #ffffff;
+      --headline-gradient: linear-gradient(180deg, #0f172a 0%, #334155 100%);
+      --headline-shadow: none;
+      --badge-bg: rgba(79, 70, 229, 0.06);
+      --badge-border: rgba(79, 70, 229, 0.15);
+      --badge-color: #4f46e5;
+      --btn-sec-bg: rgba(255, 255, 255, 0.6);
+      --btn-sec-border: rgba(15, 23, 42, 0.08);
+      --btn-sec-hover-bg: rgba(255, 255, 255, 0.85);
+      --control-hover-bg: rgba(255, 255, 255, 0.7);
+      --glow-1-color: #c7d2fe;
+      --glow-2-color: #fed7aa;
+      --glow-opacity: 0.55;
+      --glow-blend: multiply;
+      --glow-filter: blur(100px);
+      --card-inset-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
     }
 
-    [data-theme="light"] {
-      --bg-color: #f4f5f7;
-      --card-bg: rgba(255, 255, 255, 0.7);
-      --card-border: rgba(0, 0, 0, 0.06);
-      --text-color: #1f2937;
-      --text-muted: rgba(31, 41, 55, 0.6);
-      --accent-gradient: linear-gradient(135deg, #6d28d9, #db2777, #2563eb);
-      --glow-color: rgba(109, 40, 217, 0.15);
-      --shadow-color: rgba(0, 0, 0, 0.05);
-      --toast-bg: rgba(0, 0, 0, 0.8);
+    [data-theme="dark"] {
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      --card-bg: rgba(15, 23, 42, 0.45);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-color: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-gradient: linear-gradient(135deg, #818cf8, #a78bfa);
+      --glow-color: rgba(129, 140, 248, 0.2);
+      --shadow-color: rgba(0, 0, 0, 0.4);
+      --toast-bg: rgba(255, 255, 255, 0.95);
+      --toast-color: #0f172a;
+      --headline-gradient: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+      --headline-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+      --badge-bg: rgba(129, 140, 248, 0.15);
+      --badge-border: rgba(129, 140, 248, 0.3);
+      --badge-color: #818cf8;
+      --btn-sec-bg: rgba(255, 255, 255, 0.05);
+      --btn-sec-border: rgba(255, 255, 255, 0.08);
+      --btn-sec-hover-bg: rgba(255, 255, 255, 0.1);
+      --control-hover-bg: rgba(255, 255, 255, 0.1);
+      --glow-1-color: #4f46e5;
+      --glow-2-color: #ec4899;
+      --glow-opacity: 0.3;
+      --glow-blend: screen;
+      --glow-filter: blur(120px);
+      --card-inset-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
     }
 
     * {
@@ -53,7 +85,8 @@
 
     body {
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-      background-color: var(--bg-color);
+      background: var(--bg-gradient);
+      background-attachment: fixed;
       color: var(--text-color);
       min-height: 100vh;
       display: flex;
@@ -61,31 +94,25 @@
       align-items: center;
       overflow: hidden;
       position: relative;
-      transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1), color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: background 0.6s ease, color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     /* Ambient Background Glows */
     .glow-sphere {
       position: absolute;
       border-radius: 50%;
-      filter: blur(120px);
+      filter: var(--glow-filter);
       z-index: 1;
       pointer-events: none;
-      opacity: 0.4;
-      mix-blend-mode: screen;
+      opacity: var(--glow-opacity);
+      mix-blend-mode: var(--glow-blend);
       transition: all 0.8s ease;
-    }
-
-    [data-theme="light"] .glow-sphere {
-      mix-blend-mode: multiply;
-      opacity: 0.15;
-      filter: blur(100px);
     }
 
     .glow-1 {
       width: 500px;
       height: 500px;
-      background: radial-gradient(circle, #8b5cf6 0%, rgba(139, 92, 246, 0) 70%);
+      background: radial-gradient(circle, var(--glow-1-color) 0%, transparent 70%);
       top: -10%;
       left: -10%;
       animation: float-1 25s infinite alternate ease-in-out;
@@ -94,7 +121,7 @@
     .glow-2 {
       width: 600px;
       height: 600px;
-      background: radial-gradient(circle, #ec4899 0%, rgba(236, 72, 153, 0) 70%);
+      background: radial-gradient(circle, var(--glow-2-color) 0%, transparent 70%);
       bottom: -15%;
       right: -10%;
       animation: float-2 30s infinite alternate ease-in-out;
@@ -175,7 +202,7 @@
       padding: 60px 40px;
       box-shadow:
         0 20px 50px var(--shadow-color),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        var(--card-inset-shadow);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -228,22 +255,16 @@
       align-items: center;
       gap: 8px;
       padding: 8px 16px;
-      background: rgba(167, 139, 250, 0.1);
-      border: 1px solid rgba(167, 139, 250, 0.2);
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
       border-radius: 100px;
       font-size: 0.85rem;
       font-weight: 600;
       letter-spacing: 0.05em;
-      color: #a78bfa;
+      color: var(--badge-color);
       margin-bottom: 30px;
       text-transform: uppercase;
       animation: pulse 2s infinite;
-    }
-
-    [data-theme="light"] .badge {
-      background: rgba(109, 40, 217, 0.06);
-      border: 1px solid rgba(109, 40, 217, 0.15);
-      color: #6d28d9;
     }
 
     @keyframes pulse {
@@ -263,19 +284,18 @@
 
     /* The Main Statement */
     .headline {
-      font-size: 2.8rem;
+      font-size: 40px;
       font-weight: 800;
       line-height: 1.35;
       letter-spacing: -0.03em;
       margin-bottom: 25px;
       word-break: keep-all;
-      background: var(--accent-gradient);
+      background: var(--headline-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      animation: shine 8s linear infinite;
-      background-size: 200% auto;
-      transition: font-size 0.3s ease;
+      filter: drop-shadow(var(--headline-shadow, 0 0 0 transparent));
+      transition: font-size 0.3s ease, opacity 0.4s ease, transform 0.4s ease;
     }
 
     @keyframes shine {
@@ -294,7 +314,7 @@
 
     @media (max-width: 600px) {
       .headline {
-        font-size: 2.1rem;
+        font-size: 32px;
       }
 
       .card {
@@ -310,6 +330,7 @@
       line-height: 1.6;
       margin-bottom: 35px;
       font-weight: 400;
+      transition: color 0.6s ease, opacity 0.4s ease, transform 0.4s ease;
     }
 
     /* Action Buttons Area */
@@ -353,27 +374,97 @@
       transform: translateY(0);
     }
 
+    .btn-yellow {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      color: #1e293b;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.25);
+      background-size: 200% auto;
+      margin-bottom: 25px;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .btn-yellow:hover {
+      background-position: right center;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+    }
+
+    .btn-yellow:active {
+      transform: translateY(0);
+    }
+
+    .btn-blue {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(29, 78, 216, 0.25);
+      background-size: 200% auto;
+      margin-bottom: 25px;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .btn-blue:hover {
+      background-position: right center;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(29, 78, 216, 0.4);
+    }
+
+    .btn-blue:active {
+      transform: translateY(0);
+    }
+
+    .btn-red {
+      background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(244, 63, 94, 0.25);
+      background-size: 200% auto;
+      margin-bottom: 25px;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .btn-red:hover {
+      background-position: right center;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(244, 63, 94, 0.4);
+    }
+
+    .btn-red:active {
+      transform: translateY(0);
+    }
+
+    .btn-gray {
+      background: linear-gradient(135deg, #64748b 0%, #334155 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(100, 116, 139, 0.25);
+      background-size: 200% auto;
+      margin-bottom: 25px;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .btn-gray:hover {
+      background-position: right center;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(100, 116, 139, 0.4);
+    }
+
+    .btn-gray:active {
+      transform: translateY(0);
+    }
+
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--btn-sec-bg);
+      border: 1px solid var(--btn-sec-border);
       color: var(--text-color);
       backdrop-filter: blur(10px);
     }
 
-    [data-theme="light"] .btn-secondary {
-      background: rgba(0, 0, 0, 0.03);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-    }
-
     .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
+      background: var(--btn-sec-hover-bg);
+      border-color: var(--card-border);
       transform: translateY(-2px);
-    }
-
-    [data-theme="light"] .btn-secondary:hover {
-      background: rgba(0, 0, 0, 0.06);
-      border-color: rgba(0, 0, 0, 0.15);
     }
 
     /* Floating Utilities */
@@ -404,13 +495,8 @@
 
     .control-btn:hover {
       transform: scale(1.1) rotate(10deg);
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    [data-theme="light"] .control-btn:hover {
-      background: rgba(0, 0, 0, 0.05);
-      border-color: rgba(0, 0, 0, 0.15);
+      background: var(--control-hover-bg);
+      border-color: var(--card-border);
     }
 
     /* Toast Notification */
@@ -421,7 +507,7 @@
       transform: translateX(-50%);
       background: var(--toast-bg);
       backdrop-filter: blur(12px);
-      color: #ffffff;
+      color: var(--toast-color);
       padding: 14px 28px;
       border-radius: 50px;
       font-size: 0.95rem;
@@ -433,11 +519,7 @@
       z-index: 1000;
       transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
       opacity: 0;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    [data-theme="light"] .toast {
-      color: #ffffff;
+      border: 1px solid var(--card-border);
     }
 
     .toast.show {
@@ -480,16 +562,20 @@
     <main class="card" id="main-card">
       <div class="badge" id="idea-badge">
         <i class="fa-solid fa-wand-magic-sparkles"></i>
-        <span>Project Day 0</span>
+        <span>Project Day 1</span>
       </div>
 
       <h1 class="headline" id="main-headline">
-        화면 중앙에 내 첫번째 아이디어
+        오늘도 힘내세요
       </h1>
 
       <p class="description">
-        마음속에 품고 있던 그 첫 번째 생각이 화면 한가운데서 아름답게 빛나기 시작합니다. 이 작은 한 줄이 위대한 무언가의 시작점이 될 것입니다.
+        지치고 힘든 하루 속에서도 따뜻한 응원의 한 마디가 화면 한가운데서 아름답게 빛납니다. 오늘도 당신의 하루가 행복으로 가득하길 바랍니다.
       </p>
+
+      <button class="btn btn-yellow" id="next-btn" onclick="showNextSentence()">
+        <i class="fa-solid fa-forward"></i> 다음 문장 보기
+      </button>
 
       <div class="button-group">
         <button class="btn btn-primary" id="copy-btn" onclick="copyText()">
@@ -548,7 +634,15 @@
     const ctx = canvas.getContext('2d');
 
     let particles = [];
-    const colors = ['#a78bfa', '#f472b6', '#60a5fa', '#34d399', '#fbbf24'];
+    
+    function getParticleColors() {
+      const currentTheme = document.body.getAttribute('data-theme');
+      if (currentTheme === 'light') {
+        return ['#4f46e5', '#6366f1', '#3b82f6', '#06b6d4', '#ec4899'];
+      } else {
+        return ['#818cf8', '#a78bfa', '#60a5fa', '#34d399', '#fbbf24'];
+      }
+    }
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -560,12 +654,13 @@
 
     class Particle {
       constructor(x, y, vx, vy, size, color, alpha, fade) {
+        const themeColors = getParticleColors();
         this.x = x || Math.random() * canvas.width;
         this.y = y || Math.random() * canvas.height;
         this.vx = vx !== undefined ? vx : (Math.random() - 0.5) * 1.5;
         this.vy = vy !== undefined ? vy : (Math.random() - 0.5) * 1.5;
         this.size = size || Math.random() * 3 + 1;
-        this.color = color || colors[Math.floor(Math.random() * colors.length)];
+        this.color = color || themeColors[Math.floor(Math.random() * themeColors.length)];
         this.alpha = alpha || Math.random() * 0.5 + 0.1;
         this.fade = fade || 0.002 + Math.random() * 0.003;
       }
@@ -625,6 +720,7 @@
     function triggerSparkleBurst(customX, customY, count = 25) {
       const x = customX !== undefined ? customX : window.innerWidth / 2;
       const y = customY !== undefined ? customY : window.innerHeight / 2 - 50;
+      const themeColors = getParticleColors();
 
       for (let i = 0; i < count; i++) {
         const angle = Math.random() * Math.PI * 2;
@@ -632,7 +728,7 @@
         const vx = Math.cos(angle) * speed;
         const vy = Math.sin(angle) * speed;
         const size = Math.random() * 4 + 2;
-        const color = colors[Math.floor(Math.random() * colors.length)];
+        const color = themeColors[Math.floor(Math.random() * themeColors.length)];
 
         const p = new Particle(x, y, vx, vy, size, color, 1.0, 0.015 + Math.random() * 0.01);
         p.burst = true;
@@ -677,6 +773,75 @@
       setTimeout(() => {
         toast.classList.remove('show');
       }, 2500);
+    }
+
+    // Sentences Pool for Encouraging Quotes
+    const sentences = [
+      {
+        headline: "오늘도 힘내세요",
+        description: "지치고 힘든 하루 속에서도 따뜻한 응원의 한 마디가 화면 한가운데서 아름답게 빛납니다. 오늘도 당신의 하루가 행복으로 가득하길 바랍니다."
+      },
+      {
+        headline: "당신은 존재만으로 빛나요",
+        description: "다른 사람의 시선에 흔들리지 마세요. 당신은 그 자체로 충분히 소중하며, 세상에 단 하나뿐인 가장 아름다운 보석입니다."
+      },
+      {
+        headline: "포기하지 않는 마음",
+        description: "지금 겪고 있는 어둠은 곧 다가올 눈부신 아침을 향해 가는 과정일 뿐입니다. 조금만 더 힘을 내면 찬란한 빛이 당신을 맞이할 거예요."
+      },
+      {
+        headline: "오늘 하루도 수고 많았어요",
+        description: "누구보다 열심히 달렸을 당신의 하루를 위로합니다. 오늘 밤은 모든 걱정을 내려놓고, 편안하고 따뜻한 꿈을 꾸길 바랄게요."
+      },
+      {
+        headline: "늘 당신을 응원합니다",
+        description: "보이지 않는 곳에서도 늘 당신을 아끼고 지지하는 마음들이 곁에 있습니다. 당신이 걸어가는 모든 발걸음마다 행복이 가득하길 응원해요."
+      }
+    ];
+
+    let currentSentenceIndex = 0;
+
+    function showNextSentence() {
+      const headlineEl = document.getElementById('main-headline');
+      const descEl = document.querySelector('.description');
+
+      currentSentenceIndex = (currentSentenceIndex + 1) % sentences.length;
+      const nextData = sentences[currentSentenceIndex];
+
+      // Fade out
+      headlineEl.style.opacity = 0;
+      descEl.style.opacity = 0;
+      headlineEl.style.transform = 'translateY(-10px)';
+      descEl.style.transform = 'translateY(10px)';
+
+      setTimeout(() => {
+        // Change text
+        headlineEl.innerText = nextData.headline;
+        descEl.innerText = nextData.description;
+
+        // Change button color dynamically based on headline
+        const btn = document.getElementById('next-btn');
+        btn.classList.remove('btn-yellow', 'btn-blue', 'btn-red', 'btn-gray');
+
+        if (nextData.headline === "당신은 존재만으로 빛나요" || nextData.headline === "늘 당신을 응원합니다") {
+          btn.classList.add('btn-blue');
+        } else if (nextData.headline === "포기하지 않는 마음") {
+          btn.classList.add('btn-red');
+        } else if (nextData.headline === "오늘 하루도 수고 많았어요") {
+          btn.classList.add('btn-gray');
+        } else {
+          btn.classList.add('btn-yellow');
+        }
+
+        // Fade in
+        headlineEl.style.opacity = 1;
+        descEl.style.opacity = 1;
+        headlineEl.style.transform = 'translateY(0)';
+        descEl.style.transform = 'translateY(0)';
+
+        // Celebrate text change with sparkle effect at the center of the card
+        triggerSparkleBurst(window.innerWidth / 2, window.innerHeight / 2 - 50, 20);
+      }, 400);
     }
   </script>
 </body>
