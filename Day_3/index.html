@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>실시간 점심 메뉴 투표 서비스 - 49chan Lunch</title>
+  <meta name="description" content="오늘 점심 뭐 먹지? 실시간으로 사람들의 투표 결과를 확인하고 당신의 맛있는 한 표를 행사하세요.">
+
+  <!-- SEO & Open Graph -->
+  <meta property="og:title" content="실시간 점심 메뉴 투표 - 오늘의 점심">
+  <meta property="og:description" content="비빔밥, 돈까스, 국밥, 샐러드 중 오늘의 런치 메뉴는? 실시간 차트와 생동감 넘치는 시뮬레이션 투표를 경험해보세요.">
+  <meta property="og:type" content="website">
+
+  <!-- Pretendard Font for Korean typography -->
+  <link rel="stylesheet" as="style" crossorigin
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+
+  <!-- FontAwesome for beautiful icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #fff7ed 0%, #ffedd5 50%, #fed7aa 100%);
+      --card-bg: rgba(255, 255, 255, 0.45);
+      --card-border: rgba(255, 255, 255, 0.6);
+      --text-color: #27272a;
+      --text-muted: #71717a;
+      --accent-gradient: linear-gradient(135deg, #f97316, #ea580c);
+      --accent-hover-gradient: linear-gradient(135deg, #ea580c, #c2410c);
+      --glow-color: rgba(249, 115, 22, 0.18);
+      --shadow-color: rgba(120, 53, 4, 0.08);
+      --toast-bg: rgba(39, 39, 42, 0.92);
+      --toast-color: #ffffff;
+      --headline-gradient: linear-gradient(180deg, #431407 0%, #7c2d12 100%);
+      --badge-bg: rgba(249, 115, 22, 0.08);
+      --badge-border: rgba(249, 115, 22, 0.2);
+      --badge-color: #c2410c;
+      --btn-sec-bg: rgba(255, 255, 255, 0.6);
+      --btn-sec-border: rgba(39, 39, 42, 0.08);
+      --btn-sec-hover-bg: rgba(255, 255, 255, 0.85);
+      --control-hover-bg: rgba(255, 255, 255, 0.7);
+
+      /* Particles & Glow effects */
+      --glow-1-color: #ffedd5;
+      --glow-2-color: #fdba74;
+      --glow-opacity: 0.6;
+      --glow-blend: multiply;
+      --glow-filter: blur(100px);
+      --card-inset-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+
+      --footer-bg: #fff7ed;
+      --footer-text: #a1a1aa;
+      --footer-border: rgba(249, 115, 22, 0.08);
+      --header-bg: linear-gradient(135deg, #7c2d12, #431407);
+
+      /* Menu Card Styles */
+      --card-active-border: #f97316;
+      --card-active-glow: rgba(249, 115, 22, 0.25);
+    }
+
+    [data-theme="dark"] {
+      --bg-gradient: linear-gradient(135deg, #09090b 0%, #18181b 50%, #27272a 100%);
+      --card-bg: rgba(24, 24, 27, 0.45);
+      --card-border: rgba(255, 255, 255, 0.06);
+      --text-color: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --accent-gradient: linear-gradient(135deg, #ff7e47, #ff4500);
+      --accent-hover-gradient: linear-gradient(135deg, #e63e00, #b33000);
+      --glow-color: rgba(255, 126, 71, 0.22);
+      --shadow-color: rgba(0, 0, 0, 0.45);
+      --toast-bg: rgba(244, 244, 245, 0.95);
+      --toast-color: #18181b;
+      --headline-gradient: linear-gradient(180deg, #ffffff 0%, #f4f4f5 100%);
+      --badge-bg: rgba(255, 126, 71, 0.15);
+      --badge-border: rgba(255, 126, 71, 0.3);
+      --badge-color: #ff7e47;
+      --btn-sec-bg: rgba(255, 255, 255, 0.05);
+      --btn-sec-border: rgba(255, 255, 255, 0.08);
+      --btn-sec-hover-bg: rgba(255, 255, 255, 0.1);
+      --control-hover-bg: rgba(255, 255, 255, 0.1);
+
+      --glow-1-color: #431407;
+      --glow-2-color: #270b02;
+      --glow-opacity: 0.35;
+      --glow-blend: screen;
+      --glow-filter: blur(120px);
+      --card-inset-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+      --footer-bg: #09090b;
+      --footer-text: #71717a;
+      --footer-border: rgba(255, 255, 255, 0.05);
+      --header-bg: linear-gradient(135deg, #270b02, #09090b);
+
+      --card-active-border: #ff7e47;
+      --card-active-glow: rgba(255, 126, 71, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: auto;
+      position: relative;
+      transition: background 0.6s ease, color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    header {
+      background: var(--header-bg);
+      color: #ffffff;
+      width: 100%;
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(124, 45, 18, 0.2);
+      z-index: 10;
+      position: relative;
+      transition: background 0.6s ease;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    header h1 i {
+      color: #fbbf24;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-4px);
+      }
+    }
+
+    header nav {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    /* Live Counter Badge in Header */
+    .live-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #f87171;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ef4444;
+      animation: blink 1.2s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 0.4;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    main.app-main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      width: 100%;
+      padding: 40px 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Ambient Background Glows */
+    .glow-sphere {
+      position: absolute;
+      border-radius: 50%;
+      filter: var(--glow-filter);
+      z-index: 1;
+      pointer-events: none;
+      opacity: var(--glow-opacity);
+      mix-blend-mode: var(--glow-blend);
+      transition: all 0.8s ease;
+    }
+
+    .glow-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, var(--glow-1-color) 0%, transparent 70%);
+      top: -10%;
+      left: -10%;
+      animation: float-1 25s infinite alternate ease-in-out;
+    }
+
+    .glow-2 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--glow-2-color) 0%, transparent 70%);
+      bottom: -15%;
+      right: -10%;
+      animation: float-2 30s infinite alternate ease-in-out;
+    }
+
+    @keyframes float-1 {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      50% {
+        transform: translate(80px, 60px) scale(1.15);
+      }
+
+      100% {
+        transform: translate(-30px, 120px) scale(0.95);
+      }
+    }
+
+    @keyframes float-2 {
+      0% {
+        transform: translate(0, 0) scale(1.05);
+      }
+
+      50% {
+        transform: translate(-100px, -50px) scale(0.9);
+      }
+
+      100% {
+        transform: translate(60px, -120px) scale(1.2);
+      }
+    }
+
+    /* Particle Canvas */
+    #particle-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* Main Container (Two Columns Grid) */
+    .app-container {
+      width: 100%;
+      max-width: 1200px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 30px;
+      z-index: 10;
+      animation: fade-in-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fade-in-up {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Glassmorphism Card Base */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: 35px;
+      box-shadow: 0 15px 35px var(--shadow-color), var(--card-inset-shadow);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1), box-shadow 0.4s ease, background-color 0.6s ease, border-color 0.6s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 20px 45px var(--shadow-color), 0 0 35px var(--glow-color);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 28px;
+      padding: 1.5px;
+      background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      transition: opacity 0.5s;
+      opacity: 0.4;
+    }
+
+    .card:hover::before {
+      background: var(--accent-gradient);
+      opacity: 1;
+    }
+
+    /* Section Headings */
+    .card-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-color);
+      border-bottom: 2px solid rgba(249, 115, 22, 0.15);
+      padding-bottom: 12px;
+    }
+
+    .card-title i {
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* 2x2 Menu Cards Grid */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    /* Indivual Menu Card */
+    .menu-card {
+      background: rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    [data-theme="dark"] .menu-card {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .menu-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(249, 115, 22, 0.4);
+      box-shadow: 0 10px 20px rgba(249, 115, 22, 0.08);
+    }
+
+    /* Selected state */
+    .menu-card.selected {
+      border-color: var(--card-active-border);
+      box-shadow: 0 12px 25px var(--card-active-glow);
+      background: rgba(249, 115, 22, 0.06);
+    }
+
+    [data-theme="dark"] .menu-card.selected {
+      background: rgba(255, 126, 71, 0.06);
+    }
+
+    .menu-image-container {
+      position: relative;
+      width: 100%;
+      height: 140px;
+      overflow: hidden;
+    }
+
+    .menu-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .menu-card:hover .menu-image {
+      transform: scale(1.08);
+    }
+
+    /* Selected Check Overlay */
+    .select-overlay {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(5px);
+      border: 1.5px solid rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 0.85rem;
+      opacity: 0;
+      transform: scale(0.6);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+    }
+
+    .menu-card.selected .select-overlay {
+      opacity: 1;
+      transform: scale(1);
+      background: var(--accent-gradient);
+      border-color: transparent;
+      box-shadow: 0 0 10px var(--card-active-glow);
+    }
+
+    .menu-info {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      gap: 6px;
+    }
+
+    .menu-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .menu-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      word-break: keep-all;
+    }
+
+    /* Primary Vote Button */
+    .btn-vote-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 400px;
+      padding: 16px 32px;
+      border-radius: 20px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 8px 25px rgba(249, 115, 22, 0.25);
+    }
+
+    .btn-primary {
+      background: var(--accent-gradient);
+      color: #ffffff;
+      background-size: 200% auto;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover-gradient);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px var(--glow-color);
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-primary:disabled {
+      background: #d1d5db;
+      color: #9ca3af;
+      cursor: not-allowed;
+      box-shadow: none;
+      opacity: 0.6;
+    }
+
+    [data-theme="dark"] .btn-primary:disabled {
+      background: #3f3f46;
+      color: #71717a;
+    }
+
+    /* Dynamic pulse animation for primary active button */
+    .btn-pulse {
+      animation: pulse-glow 2s infinite;
+    }
+
+    @keyframes pulse-glow {
+      0% {
+        box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4);
+      }
+
+      70% {
+        box-shadow: 0 0 0 15px rgba(249, 115, 22, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(249, 115, 22, 0);
+      }
+    }
+
+    /* Live Results Chart Area */
+    .results-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .stats-summary {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 16px 24px;
+      border-radius: 18px;
+      margin-bottom: 10px;
+    }
+
+    [data-theme="dark"] .stats-summary {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.04);
+    }
+
+    .total-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .total-count {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text-color);
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .total-count span {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* Chart Bars */
+    .chart-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chart-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+    }
+
+    .chart-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+    }
+
+    .chart-label i {
+      width: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    /* Color definitions per food */
+    .bibimbap-color {
+      color: #e11d48;
+    }
+
+    .tonkatsu-color {
+      color: #d97706;
+    }
+
+    .gukbap-color {
+      color: #059669;
+    }
+
+    .salad-color {
+      color: #2563eb;
+    }
+
+    .chart-values {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 10px;
+    }
+
+    .chart-percentage {
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    /* Progress bar outer container */
+    .bar-container {
+      width: 100%;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 100px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    [data-theme="dark"] .bar-container {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.03);
+    }
+
+    /* Progress bar fill gradient */
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 100px;
+      transition: width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Individual Bar Fills */
+    #bar-bibimbap {
+      background: linear-gradient(90deg, #fda4af, #e11d48);
+    }
+
+    #bar-tonkatsu {
+      background: linear-gradient(90deg, #fde047, #d97706);
+    }
+
+    #bar-gukbap {
+      background: linear-gradient(90deg, #6ee7b7, #059669);
+    }
+
+    #bar-salad {
+      background: linear-gradient(90deg, #93c5fd, #2563eb);
+    }
+
+    /* Shimmer gloss effect on fill bar */
+    .bar-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+      animation: bar-shine 3s infinite linear;
+    }
+
+    @keyframes bar-shine {
+      0% {
+        left: -100%;
+      }
+
+      50% {
+        left: 100%;
+      }
+
+      100% {
+        left: 100%;
+      }
+    }
+
+    /* Control Panel Section */
+    .control-panel {
+      margin-top: 5px;
+      background: rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    [data-theme="dark"] .control-panel {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .control-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Switch Style */
+    .switch-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .switch-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 52px;
+      height: 28px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #d1d5db;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    [data-theme="dark"] .slider {
+      background-color: #3f3f46;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    input:checked+.slider {
+      background: var(--accent-gradient);
+    }
+
+    input:focus+.slider {
+      box-shadow: 0 0 1px #f97316;
+    }
+
+    input:checked+.slider:before {
+      transform: translateX(24px);
+    }
+
+    /* Sim Speed Panel & Buttons */
+    .speed-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .btn-speed-group {
+      display: flex;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.05);
+      padding: 4px;
+      border-radius: 12px;
+    }
+
+    [data-theme="dark"] .btn-speed-group {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-speed {
+      border: none;
+      outline: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-speed.active {
+      background: #ffffff;
+      color: var(--text-color);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    [data-theme="dark"] .btn-speed.active {
+      background: #27272a;
+      color: #ffffff;
+    }
+
+    .btn-reset {
+      border: 1px solid var(--btn-sec-border);
+      background: var(--btn-sec-bg);
+      color: var(--text-color);
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s;
+      width: 100%;
+    }
+
+    .btn-reset:hover {
+      background: var(--btn-sec-hover-bg);
+      transform: translateY(-1px);
+    }
+
+    .btn-reset:active {
+      transform: translateY(0);
+    }
+
+    /* Simulation Feed logs (Dynamic small notifications) */
+    .sim-feed {
+      height: 36px;
+      overflow: hidden;
+      position: relative;
+      margin-top: 5px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.03);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+    }
+
+    [data-theme="dark"] .sim-feed {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .feed-text {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #f97316;
+      animation: slide-up-fade 0.5s ease-out forwards;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-align: center;
+    }
+
+    @keyframes slide-up-fade {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Floating Utilities */
+    .controls {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      display: flex;
+      gap: 12px;
+      z-index: 100;
+    }
+
+    .control-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-color);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .control-btn:hover {
+      transform: scale(1.1) rotate(10deg);
+      background: var(--control-hover-bg);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: -80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--toast-bg);
+      backdrop-filter: blur(12px);
+      color: var(--toast-color);
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+      transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+      opacity: 0;
+      border: 1px solid var(--card-border);
+    }
+
+    .toast.show {
+      bottom: 40px;
+      opacity: 1;
+    }
+
+    /* Footer */
+    footer.app-footer {
+      background: var(--footer-bg);
+      color: var(--footer-text);
+      width: 100%;
+      padding: 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-top: 1px solid var(--footer-border);
+      z-index: 10;
+      position: relative;
+      letter-spacing: 0.02em;
+      transition: background 0.6s ease, color 0.6s ease, border-color 0.6s ease;
+    }
+
+    /* Spin Animation for Reload */
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .spinning {
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* Media Queries */
+    @media (max-width: 950px) {
+      .app-container {
+        grid-template-columns: 1fr;
+        max-width: 680px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 16px 20px;
+      }
+
+      header h1 {
+        font-size: 1.2rem;
+      }
+
+      header nav {
+        gap: 16px;
+      }
+
+      .menu-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Background Decorative Glowing Spheres -->
+  <div class="glow-sphere glow-1"></div>
+  <div class="glow-sphere glow-2"></div>
+
+  <!-- Interactive Background Canvas for subtle particles -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- Main Utility Controls -->
+  <div class="controls">
+    <button class="control-btn" id="theme-toggle" title="테마 변경" aria-label="Toggle theme">
+      <i class="fa-solid fa-moon"></i>
+    </button>
+  </div>
+
+  <header>
+    <h1><i class="fa-solid fa-utensils"></i> 49chan Lunch</h1>
+    <nav>
+      <div class="live-indicator">
+        <div class="live-dot"></div>
+        <span>LIVE VOTING</span>
+      </div>
+    </nav>
+  </header>
+
+  <!-- App Wrapper -->
+  <main class="app-main">
+    <div class="app-container">
+
+      <!-- Left Column: Menu Selector -->
+      <section class="card" id="menu-section">
+        <h2 class="card-title">
+          <i class="fa-solid fa-list-check"></i> 오늘 뭐 먹지? 메뉴 선택
+        </h2>
+
+        <div class="menu-grid">
+          <!-- Bibimbap Card -->
+          <div class="menu-card" data-menu="bibimbap" onclick="selectMenu('bibimbap')">
+            <div class="menu-image-container">
+              <img src="images/bibimbap.png" alt="비빔밥" class="menu-image">
+              <div class="select-overlay">
+                <i class="fa-solid fa-check"></i>
+              </div>
+            </div>
+            <div class="menu-info">
+              <div class="menu-name">비빔밥</div>
+              <div class="menu-desc">신선한 나물과 매콤한 고추장, 고소한 참기름의 환상적인 하모니</div>
+            </div>
+          </div>
+
+          <!-- Tonkatsu Card -->
+          <div class="menu-card" data-menu="tonkatsu" onclick="selectMenu('tonkatsu')">
+            <div class="menu-image-container">
+              <img src="images/tonkatsu.png" alt="돈까스" class="menu-image">
+              <div class="select-overlay">
+                <i class="fa-solid fa-check"></i>
+              </div>
+            </div>
+            <div class="menu-info">
+              <div class="menu-name">돈까스</div>
+              <div class="menu-desc">바삭바삭한 튀김옷 속에 촉촉한 육즙을 가득 머금은 프리미엄 수제 돈까스</div>
+            </div>
+          </div>
+
+          <!-- Gukbap Card -->
+          <div class="menu-card" data-menu="gukbap" onclick="selectMenu('gukbap')">
+            <div class="menu-image-container">
+              <img src="images/gukbap.png" alt="국밥" class="menu-image">
+              <div class="select-overlay">
+                <i class="fa-solid fa-check"></i>
+              </div>
+            </div>
+            <div class="menu-info">
+              <div class="menu-name">국밥</div>
+              <div class="menu-desc">펄펄 끓는 뚝배기에 깊게 우려낸 진한 육수와 든든한 고기 한 그릇</div>
+            </div>
+          </div>
+
+          <!-- Salad Card -->
+          <div class="menu-card" data-menu="salad" onclick="selectMenu('salad')">
+            <div class="menu-image-container">
+              <img src="images/salad.png" alt="샐러드" class="menu-image">
+              <div class="select-overlay">
+                <i class="fa-solid fa-check"></i>
+              </div>
+            </div>
+            <div class="menu-info">
+              <div class="menu-name">샐러드</div>
+              <div class="menu-desc">아삭하고 싱그러운 유기농 채소와 단백질 가득 토핑의 헬시 볼</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-vote-container">
+          <button class="btn btn-primary" id="btn-vote" disabled onclick="castVote()">
+            <i class="fa-solid fa-square-poll-horizontal"></i> 투표하기
+          </button>
+        </div>
+      </section>
+
+      <!-- Right Column: Results & Control Panel -->
+      <section class="card" id="results-section">
+        <h2 class="card-title" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+          <span><i class="fa-solid fa-chart-simple"></i> 실시간 투표 현황</span>
+          <button id="refresh-sheet-btn" class="control-btn" title="구글 시트 새로고침"
+            style="width: 32px; height: 32px; font-size: 0.85rem; position: static;"
+            onclick="fetchGoogleSheetsData(true)">
+            <i class="fa-solid fa-rotate"></i>
+          </button>
+        </h2>
+
+        <div class="results-panel">
+          <div class="stats-summary" style="display: flex; flex-direction: column; gap: 8px; align-items: stretch;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="total-title">누적 투표수</span>
+              <div class="total-count" id="total-vote-display">0 <span>표</span></div>
+            </div>
+            <div
+              style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px; font-size: 0.8rem; color: var(--text-muted);">
+              <span style="display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-table-list"></i> 구글 시트 데이터
+              </span>
+              <span id="sync-status-badge"
+                style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #10b981;">
+                <span class="live-dot"
+                  style="background-color: #10b981; box-shadow: 0 0 6px #10b981; width: 6px; height: 6px;"></span>
+                연동됨
+              </span>
+            </div>
+          </div>
+
+          <!-- Bibimbap Result -->
+          <div class="chart-item">
+            <div class="chart-info">
+              <span class="chart-label"><i class="fa-solid fa-bowl-food bibimbap-color"></i> 비빔밥</span>
+              <div class="chart-values">
+                <span id="count-bibimbap">0표</span>
+                <span class="chart-percentage" id="percent-bibimbap">0%</span>
+              </div>
+            </div>
+            <div class="bar-container">
+              <div class="bar-fill" id="bar-bibimbap"></div>
+            </div>
+          </div>
+
+          <!-- Tonkatsu Result -->
+          <div class="chart-item">
+            <div class="chart-info">
+              <span class="chart-label"><i class="fa-solid fa-drumstick-bite tonkatsu-color"></i> 돈까스</span>
+              <div class="chart-values">
+                <span id="count-tonkatsu">0표</span>
+                <span class="chart-percentage" id="percent-tonkatsu">0%</span>
+              </div>
+            </div>
+            <div class="bar-container">
+              <div class="bar-fill" id="bar-tonkatsu"></div>
+            </div>
+          </div>
+
+          <!-- Gukbap Result -->
+          <div class="chart-item">
+            <div class="chart-info">
+              <span class="chart-label"><i class="fa-solid fa-bowl-hot gukbap-color"></i> 국밥</span>
+              <div class="chart-values">
+                <span id="count-gukbap">0표</span>
+                <span class="chart-percentage" id="percent-gukbap">0%</span>
+              </div>
+            </div>
+            <div class="bar-container">
+              <div class="bar-fill" id="bar-gukbap"></div>
+            </div>
+          </div>
+
+          <!-- Salad Result -->
+          <div class="chart-item">
+            <div class="chart-info">
+              <span class="chart-label"><i class="fa-solid fa-leaf salad-color"></i> 샐러드</span>
+              <div class="chart-values">
+                <span id="count-salad">0표</span>
+                <span class="chart-percentage" id="percent-salad">0%</span>
+              </div>
+            </div>
+            <div class="bar-container">
+              <div class="bar-fill" id="bar-salad"></div>
+            </div>
+          </div>
+
+          <!-- Simulation & Control Panel -->
+          <div class="control-panel">
+            <div class="control-title">
+              <i class="fa-solid fa-sliders"></i> 데이터 동기화 및 설정
+            </div>
+
+            <!-- Google Sheets Integration Switch -->
+            <div class="switch-row">
+              <span class="switch-label" style="display: flex; flex-direction: column;">
+                <strong>구글 시트 실시간 연동</strong>
+                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">공개 스프레드시트 데이터 실시간
+                  반영</span>
+              </span>
+              <label class="switch">
+                <input type="checkbox" id="sheet-sync-toggle" checked onchange="toggleSheetSync(this.checked)">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <!-- Local Simulation Switch (Only visible when Google Sheets Sync is OFF) -->
+            <div class="switch-row" id="local-sim-row" style="opacity: 0.5; transition: opacity 0.3s;">
+              <span class="switch-label" style="display: flex; flex-direction: column;">
+                <strong>실시간 투표 시뮬레이션 (로컬)</strong>
+                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">가상의 사용자 투표 발생 (구글 시트 연동 해제
+                  필요)</span>
+              </span>
+              <label class="switch">
+                <input type="checkbox" id="simulation-toggle" disabled onchange="toggleSimulation(this.checked)">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="speed-container" id="local-speed-container"
+              style="opacity: 0.5; transition: opacity 0.3s; pointer-events: none;">
+              <span class="switch-label">투표 주기 (로컬)</span>
+              <div class="btn-speed-group">
+                <button class="btn-speed" id="speed-slow" disabled onclick="setSimSpeed(7000)">느림</button>
+                <button class="btn-speed active" id="speed-normal" disabled onclick="setSimSpeed(3000)">보통</button>
+                <button class="btn-speed" id="speed-fast" disabled onclick="setSimSpeed(1200)">빠름</button>
+              </div>
+            </div>
+
+            <div class="sim-feed" id="sim-feed">
+              <span class="feed-text" style="color: var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> 구글
+                시트 데이터 로딩 중...</span>
+            </div>
+
+            <button class="btn-reset" id="btn-reset-data" onclick="resetVotes()">
+              <i class="fa-solid fa-rotate-left"></i> 데이터 초기화
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    &copy; 2026 49chan Lunch Service. All Rights Reserved.
+  </footer>
+
+  <!-- Toast Notification element -->
+  <div class="toast" id="toast">
+    <i class="fa-solid fa-circle-check" style="color: #f97316;"></i>
+    <span id="toast-message">투표가 반영되었습니다!</span>
+  </div>
+
+  <script>
+    // Theme Switcher Logic
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = themeToggle.querySelector('i');
+
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme === 'light' || (!savedTheme && !prefersDark)) {
+      document.body.setAttribute('data-theme', 'light');
+      themeIcon.className = 'fa-solid fa-sun';
+    } else {
+      document.body.setAttribute('data-theme', 'dark');
+      themeIcon.className = 'fa-solid fa-moon';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = document.body.getAttribute('data-theme');
+      if (currentTheme === 'light') {
+        document.body.setAttribute('data-theme', 'dark');
+        themeIcon.className = 'fa-solid fa-moon';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.body.setAttribute('data-theme', 'light');
+        themeIcon.className = 'fa-solid fa-sun';
+        localStorage.setItem('theme', 'light');
+      }
+      triggerSparkleBurst(window.innerWidth / 2, window.innerHeight / 2, 25);
+    });
+
+    // App State Management
+    let votes = {
+      bibimbap: 0,
+      tonkatsu: 0,
+      gukbap: 0,
+      salad: 0
+    };
+
+    // Save starting local votes in case they turn off Google Sheets
+    let localVotes = {
+      bibimbap: 120,
+      tonkatsu: 95,
+      gukbap: 154,
+      salad: 48
+    };
+
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1GJAQiDFH80H0rLa_9DNdWaHCodiydgQMCwyHODDcq0c/export?format=csv";
+    // 사용자용 Google Apps Script 배포 URL 입력란
+    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw1fWwkRgXvRB82_BujAmVzxQhnCgJ_gqZfu4YMbvapl2vFWyy0G3UVl6R9svMaqv2jjw/exec"; //
+    let isFetchingSheet = false;
+    let sheetSyncInterval = null;
+    let useGoogleSheet = true;
+
+    let selectedMenu = null;
+    let simInterval = null;
+    let simIntervalSpeed = 3000; // default 3 seconds
+    let isSimulating = false;
+
+    // Load initial state from LocalStorage if available
+    function loadState() {
+      const savedLocalVotes = localStorage.getItem('lunch_local_votes');
+      if (savedLocalVotes) {
+        localVotes = JSON.parse(savedLocalVotes);
+      }
+
+      const savedUseSheet = localStorage.getItem('lunch_use_google_sheet');
+      useGoogleSheet = savedUseSheet !== 'false';
+      document.getElementById('sheet-sync-toggle').checked = useGoogleSheet;
+
+      toggleSheetSync(useGoogleSheet);
+    }
+
+    // Save current votes to LocalStorage
+    function saveState() {
+      if (!useGoogleSheet) {
+        localStorage.setItem('lunch_local_votes', JSON.stringify(votes));
+      }
+    }
+
+    // Update charts & numbers
+    function updateUI(animateCounter = false) {
+      const total = Object.values(votes).reduce((sum, val) => sum + val, 0);
+
+      // Update Total Display
+      const totalDisplay = document.getElementById('total-vote-display');
+      if (animateCounter) {
+        animateValue(totalDisplay, parseInt(totalDisplay.innerText) || 0, total, 400);
+      } else {
+        totalDisplay.innerHTML = `${total.toLocaleString()} <span>표</span>`;
+      }
+
+      // Update Individual Bars & Percents
+      const menus = ['bibimbap', 'tonkatsu', 'gukbap', 'salad'];
+      menus.forEach(menu => {
+        const count = votes[menu];
+        const percent = total > 0 ? Math.round((count / total) * 100) : 0;
+
+        // Count Text
+        document.getElementById(`count-${menu}`).innerText = `${count.toLocaleString()}표`;
+
+        // Percentage Text
+        document.getElementById(`percent-${menu}`).innerText = `${percent}%`;
+
+        // Bar Width
+        document.getElementById(`bar-${menu}`).style.width = `${percent}%`;
+      });
+    }
+
+    // Animate number change smoothly
+    function animateValue(obj, start, end, duration) {
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const currentVal = Math.floor(progress * (end - start) + start);
+        obj.innerHTML = `${currentVal.toLocaleString()} <span>표</span>`;
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        }
+      };
+      window.requestAnimationFrame(step);
+    }
+
+    // Handle menu selection
+    function selectMenu(menuId) {
+      const cards = document.querySelectorAll('.menu-card');
+      const btnVote = document.getElementById('btn-vote');
+
+      cards.forEach(card => card.classList.remove('selected'));
+
+      if (selectedMenu === menuId) {
+        selectedMenu = null;
+        btnVote.disabled = true;
+        btnVote.classList.remove('btn-pulse');
+      } else {
+        selectedMenu = menuId;
+        const targetCard = document.querySelector(`.menu-card[data-menu="${selectedMenu}"]`);
+        if (targetCard) targetCard.classList.add('selected');
+
+        btnVote.disabled = false;
+        btnVote.classList.add('btn-pulse');
+
+        // Click micro-shake scale
+        targetCard.style.transform = 'scale(0.97)';
+        setTimeout(() => {
+          targetCard.style.transform = '';
+        }, 120);
+      }
+    }
+
+    // Cast user vote
+    const menuNamesKo = {
+      bibimbap: '비빔밥',
+      tonkatsu: '돈까스',
+      gukbap: '국밥',
+      salad: '샐러드'
+    };
+
+    async function castVote() {
+      if (!selectedMenu) return;
+
+      const btn = document.getElementById('btn-vote');
+      const originalBtnHtml = btn.innerHTML;
+
+      // Disable UI during vote submission
+      btn.disabled = true;
+      btn.classList.remove('btn-pulse');
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 투표 전송 중...`;
+
+      if (useGoogleSheet) {
+        try {
+          if (GOOGLE_APPS_SCRIPT_URL !== "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") {
+            // Send POST request to Google Apps Script
+            const formData = new URLSearchParams();
+            formData.append("menu", menuNamesKo[selectedMenu]);
+
+            await fetch(GOOGLE_APPS_SCRIPT_URL, {
+              method: "POST",
+              body: formData,
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+            });
+          }
+
+          showToast('구글 시트에 투표가 전송되었습니다! (잠시 후 동기화됩니다)');
+          // Increment locally temporarily for immediate feedback
+          votes[selectedMenu]++;
+          updateUI(true);
+        } catch (error) {
+          console.error("Vote submission error:", error);
+          showToast('투표 전송에 실패했습니다. 다시 시도해 주세요.');
+          btn.innerHTML = originalBtnHtml;
+          btn.disabled = false;
+          return;
+        }
+      } else {
+        votes[selectedMenu]++;
+        localVotes[selectedMenu]++;
+        saveState();
+        updateUI(true);
+      }
+
+      // Trigger sparkles
+      const rect = btn.getBoundingClientRect();
+      triggerSparkleBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 40);
+
+      // Toast feedback
+      if (!useGoogleSheet) {
+        showToast(`'${menuNamesKo[selectedMenu]}'에 소중한 한 표를 행사했습니다! (로컬 모드)`);
+      }
+
+      // De-select
+      const selectedCard = document.querySelector(`.menu-card[data-menu="${selectedMenu}"]`);
+      if (selectedCard) selectedCard.classList.remove('selected');
+      selectedMenu = null;
+      btn.innerHTML = originalBtnHtml;
+      btn.disabled = true;
+    }
+
+    // Show dynamic toast notifications
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toast-message');
+      toastText.innerText = message;
+      toast.classList.add('show');
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // Google Sheets Integration
+    async function fetchGoogleSheetsData(isManual = false) {
+      if (!useGoogleSheet || isFetchingSheet) return;
+      isFetchingSheet = true;
+
+      const refreshBtn = document.getElementById('refresh-sheet-btn');
+      const refreshIcon = refreshBtn ? refreshBtn.querySelector('i') : null;
+      if (refreshIcon) refreshIcon.classList.add('spinning');
+
+      const badge = document.getElementById('sync-status-badge');
+      if (badge) {
+        badge.style.color = '#3b82f6';
+        badge.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 동기화 중`;
+      }
+
+      try {
+        const response = await fetch(SHEET_CSV_URL);
+        if (!response.ok) throw new Error('Google Sheet fetch failed');
+        const csvText = await response.text();
+
+        // Parse CSV & update state
+        const newVotes = parseCSV(csvText);
+        votes = newVotes;
+        updateUI(true);
+
+        if (badge) {
+          badge.style.color = '#10b981';
+          badge.innerHTML = `<span class="live-dot" style="background-color: #10b981; box-shadow: 0 0 6px #10b981; width: 6px; height: 6px;"></span> 동기화됨`;
+        }
+
+        if (isManual) {
+          showToast('구글 시트 데이터를 성공적으로 반영했습니다!');
+          triggerSparkleBurst(window.innerWidth / 2, window.innerHeight / 2, 20);
+        }
+
+        // Update status feed
+        const feed = document.getElementById('sim-feed');
+        if (feed) {
+          const total = Object.values(votes).reduce((sum, val) => sum + val, 0);
+          if (total === 0) {
+            feed.innerHTML = `<span class="feed-text" style="color: var(--text-muted);"><i class="fa-solid fa-info-circle"></i> 구글 시트에 득표 데이터가 없습니다. (0표 처리)</span>`;
+          } else {
+            feed.innerHTML = `<span class="feed-text" style="color: #10b981;"><i class="fa-solid fa-circle-check"></i> 구글 시트 데이터 로드 완료 (총 ${total}표)</span>`;
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching Sheets:', error);
+        if (badge) {
+          badge.style.color = '#ef4444';
+          badge.innerHTML = `<span class="live-dot" style="background-color: #ef4444; box-shadow: 0 0 6px #ef4444; width: 6px; height: 6px;"></span> 동기화 실패`;
+        }
+        if (isManual) {
+          showToast('구글 시트 데이터를 가져오는데 실패했습니다.');
+        }
+      } finally {
+        isFetchingSheet = false;
+        if (refreshIcon) refreshIcon.classList.remove('spinning');
+      }
+    }
+
+    // CSV Parser logic with 0-vote fallback
+    function parseCSV(csvText) {
+      const counts = { bibimbap: 0, tonkatsu: 0, gukbap: 0, salad: 0 };
+
+      if (!csvText || !csvText.trim()) return counts;
+
+      const lines = csvText.split(/\r?\n/);
+      if (lines.length <= 1) return counts; // only header or empty
+
+      // Find 'menu' column index case-insensitively
+      const header = lines[0].split(',');
+      const menuIndex = header.findIndex(col => col.trim().toLowerCase() === 'menu');
+
+      if (menuIndex === -1) {
+        return counts; // header mismatch
+      }
+
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+
+        // Split CSV row handling potential quotes
+        const cells = line.split(',');
+        if (cells.length > menuIndex) {
+          const menuVal = cells[menuIndex].replace(/"/g, '').trim().toLowerCase();
+
+          if (menuVal === '비빔밥' || menuVal === 'bibimbap') {
+            counts.bibimbap++;
+          } else if (menuVal === '돈까스' || menuVal === 'tonkatsu') {
+            counts.tonkatsu++;
+          } else if (menuVal === '국밥' || menuVal === 'gukbap') {
+            counts.gukbap++;
+          } else if (menuVal === '샐러드' || menuVal === 'salad') {
+            counts.salad++;
+          }
+        }
+      }
+
+      return counts;
+    }
+
+    // Toggle Google Sheets integration
+    function toggleSheetSync(active) {
+      useGoogleSheet = active;
+      localStorage.setItem('lunch_use_google_sheet', active);
+
+      const localSimRow = document.getElementById('local-sim-row');
+      const localSpeed = document.getElementById('local-speed-container');
+      const simToggle = document.getElementById('simulation-toggle');
+      const speedBtns = document.querySelectorAll('.btn-speed');
+      const resetBtn = document.getElementById('btn-reset-data');
+      const badge = document.getElementById('sync-status-badge');
+      const refreshBtn = document.getElementById('refresh-sheet-btn');
+
+      if (active) {
+        // Disallow and stop local simulation
+        toggleSimulation(false);
+        simToggle.checked = false;
+        simToggle.disabled = true;
+        localSimRow.style.opacity = '0.5';
+        localSpeed.style.opacity = '0.5';
+        localSpeed.style.pointerEvents = 'none';
+        speedBtns.forEach(btn => btn.disabled = true);
+        resetBtn.disabled = true;
+        resetBtn.style.opacity = '0.5';
+        resetBtn.style.pointerEvents = 'none';
+
+        if (refreshBtn) refreshBtn.style.display = 'flex';
+
+        // Initial fetch
+        fetchGoogleSheetsData();
+
+        // 8-second interval auto sync
+        if (sheetSyncInterval) clearInterval(sheetSyncInterval);
+        sheetSyncInterval = setInterval(() => fetchGoogleSheetsData(), 8000);
+      } else {
+        // Stop Sheets Sync
+        if (sheetSyncInterval) {
+          clearInterval(sheetSyncInterval);
+          sheetSyncInterval = null;
+        }
+
+        if (badge) {
+          badge.style.color = 'var(--text-muted)';
+          badge.innerHTML = `<span class="live-dot" style="background-color: var(--text-muted); box-shadow: none; width: 6px; height: 6px;"></span> 연동 중단`;
+        }
+
+        if (refreshBtn) refreshBtn.style.display = 'none';
+
+        // Enable local controls
+        simToggle.disabled = false;
+        localSimRow.style.opacity = '1';
+        localSpeed.style.opacity = '1';
+        localSpeed.style.pointerEvents = 'auto';
+        speedBtns.forEach(btn => btn.disabled = false);
+        resetBtn.disabled = false;
+        resetBtn.style.opacity = '1';
+        resetBtn.style.pointerEvents = 'auto';
+
+        // Restore local starting votes
+        votes = { ...localVotes };
+        updateUI();
+
+        const feed = document.getElementById('sim-feed');
+        if (feed) {
+          feed.innerHTML = `<span class="feed-text" style="color: var(--text-muted);"><i class="fa-solid fa-circle-info"></i> 로컬 투표 모드로 전환되었습니다.</span>`;
+        }
+      }
+    }
+
+    // Simulation Engine (Local Mode only)
+    const nicknamePrefixes = ['배고픈', '식사중인', '즐거운', '피곤한', '맛있는', '정갈한', '미식가', '단골손님', '혼밥러', '점심조'];
+    const nicknameSuffixes = ['길동이', '철수', '영희', '부장님', '대리', '사원', '대원', '식구', '요정', '마스터'];
+
+    function runSimulationStep() {
+      if (useGoogleSheet) return;
+
+      const r = Math.random();
+      let pickedMenu = 'salad';
+      if (r < 0.32) pickedMenu = 'gukbap';
+      else if (r < 0.62) pickedMenu = 'tonkatsu';
+      else if (r < 0.87) pickedMenu = 'bibimbap';
+
+      const increment = Math.floor(Math.random() * 2) + 1;
+      votes[pickedMenu] += increment;
+      localVotes[pickedMenu] += increment;
+      saveState();
+      updateUI(true);
+
+      const prefix = nicknamePrefixes[Math.floor(Math.random() * nicknamePrefixes.length)];
+      const suffix = nicknameSuffixes[Math.floor(Math.random() * nicknameSuffixes.length)];
+      const username = `${prefix} ${suffix}`;
+
+      const feed = document.getElementById('sim-feed');
+      if (feed) {
+        feed.innerHTML = `<span class="feed-text"><i class="fa-solid fa-circle-play"></i> <strong>${username}</strong> 님이 '${menuNamesKo[pickedMenu]}'에 투표했습니다! (+${increment}표)</span>`;
+      }
+
+      // Sparkle
+      const randomX = Math.random() * (window.innerWidth - 300) + 150;
+      const randomY = Math.random() * (window.innerHeight - 300) + 150;
+      triggerSparkleBurst(randomX, randomY, 15);
+    }
+
+    function toggleSimulation(active) {
+      if (useGoogleSheet) return;
+      isSimulating = active;
+      localStorage.setItem('lunch_sim_active', active);
+
+      if (active) {
+        if (simInterval) clearInterval(simInterval);
+        simInterval = setInterval(runSimulationStep, simIntervalSpeed);
+
+        const feed = document.getElementById('sim-feed');
+        if (feed) {
+          feed.innerHTML = `<span class="feed-text" style="color: #f59e0b;"><i class="fa-solid fa-spinner fa-spin"></i> 로컬 투표 시뮬레이션 중...</span>`;
+        }
+      } else {
+        if (simInterval) {
+          clearInterval(simInterval);
+          simInterval = null;
+        }
+        const feed = document.getElementById('sim-feed');
+        if (feed) {
+          feed.innerHTML = `<span class="feed-text" style="color: var(--text-muted);"><i class="fa-solid fa-circle-stop"></i> 시뮬레이션이 중지되었습니다.</span>`;
+        }
+      }
+    }
+
+    function setSimSpeed(ms, save = true) {
+      simIntervalSpeed = ms;
+      if (save) {
+        localStorage.setItem('lunch_sim_speed', ms);
+      }
+
+      document.querySelectorAll('.btn-speed').forEach(btn => btn.classList.remove('active'));
+      if (ms >= 6000) {
+        document.getElementById('speed-slow').classList.add('active');
+      } else if (ms <= 1500) {
+        document.getElementById('speed-fast').classList.add('active');
+      } else {
+        document.getElementById('speed-normal').classList.add('active');
+      }
+
+      if (isSimulating && !useGoogleSheet) {
+        toggleSimulation(true);
+      }
+    }
+
+    // Reset votes to starting template mock values
+    function resetVotes() {
+      if (useGoogleSheet) return;
+
+      if (confirm('로컬 투표 데이터를 기본 초기 상태로 리셋하시겠습니까?')) {
+        votes = {
+          bibimbap: 120,
+          tonkatsu: 95,
+          gukbap: 154,
+          salad: 48
+        };
+        localVotes = { ...votes };
+        saveState();
+        updateUI();
+        showToast('로컬 투표 데이터가 초기 상태로 리셋되었습니다.');
+
+        const feed = document.getElementById('sim-feed');
+        if (feed) {
+          feed.innerHTML = `<span class="feed-text" style="color: var(--text-muted);"><i class="fa-solid fa-rotate-left"></i> 로컬 데이터가 리셋되었습니다.</span>`;
+        }
+      }
+    }
+
+    // Particle Canvas Animation Background
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let particles = [];
+
+    function getParticleColors() {
+      const currentTheme = document.body.getAttribute('data-theme');
+      if (currentTheme === 'light') {
+        return ['#f97316', '#fbbf24', '#f43f5e', '#ea580c', '#f59e0b', '#fda4af'];
+      } else {
+        return ['#ff7e47', '#ffb020', '#ff4500', '#f43f5e', '#fbbf24', '#ffedd5'];
+      }
+    }
+
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      ctx.scale(dpr, dpr);
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor(x, y, vx, vy, size, color, alpha, fade, burst) {
+        const themeColors = getParticleColors();
+        this.x = x || Math.random() * window.innerWidth;
+        this.y = y || Math.random() * window.innerHeight;
+        this.vx = vx !== undefined ? vx : (Math.random() - 0.5) * 1.2;
+        this.vy = vy !== undefined ? vy : - (Math.random() * 0.8 + 0.4); // Floating upwards slowly
+        this.size = size || Math.random() * 3 + 1;
+        this.color = color || themeColors[Math.floor(Math.random() * themeColors.length)];
+        this.baseAlpha = alpha || Math.random() * 0.35 + 0.15;
+        this.alpha = this.baseAlpha;
+        this.fade = fade || 0.002 + Math.random() * 0.003;
+        this.phase = Math.random() * Math.PI * 2;
+        this.burst = burst || false;
+        this.history = [];
+      }
+
+      draw() {
+        if (this.burst && this.history.length > 1) {
+          ctx.save();
+          ctx.globalAlpha = this.alpha * 0.4;
+          ctx.strokeStyle = this.color;
+          ctx.lineWidth = this.size * 0.5;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          ctx.beginPath();
+          ctx.moveTo(this.history[0].x, this.history[0].y);
+          for (let i = 1; i < this.history.length; i++) {
+            ctx.lineTo(this.history[i].x, this.history[i].y);
+          }
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        ctx.save();
+        let drawAlpha = this.alpha;
+        if (this.burst && this.alpha < 0.6) {
+          drawAlpha *= (Math.random() * 0.4 + 0.6); // Sparkle flicker
+        }
+        ctx.globalAlpha = drawAlpha;
+
+        if (this.burst) {
+          // Diamond / 4-point sparkle
+          ctx.shadowBlur = this.size * 5;
+          ctx.shadowColor = this.color;
+          ctx.fillStyle = this.color;
+
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y - this.size);
+          ctx.quadraticCurveTo(this.x, this.y, this.x + this.size, this.y);
+          ctx.quadraticCurveTo(this.x, this.y, this.x, this.y + this.size);
+          ctx.quadraticCurveTo(this.x, this.y, this.x - this.size, this.y);
+          ctx.quadraticCurveTo(this.x, this.y, this.x, this.y - this.size);
+          ctx.closePath();
+          ctx.fill();
+
+          // White core
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(this.x - this.size * 0.7, this.y);
+          ctx.lineTo(this.x + this.size * 0.7, this.y);
+          ctx.moveTo(this.x, this.y - this.size * 0.7);
+          ctx.lineTo(this.x, this.y + this.size * 0.7);
+          ctx.stroke();
+        } else {
+          // Soft ambient circular ember
+          ctx.shadowBlur = this.size * 3;
+          ctx.shadowColor = this.color;
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      update() {
+        if (this.burst) {
+          this.history.push({ x: this.x, y: this.y });
+          if (this.history.length > 6) {
+            this.history.shift();
+          }
+        }
+
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (!this.burst) {
+          this.alpha = this.baseAlpha + Math.sin(Date.now() * 0.003 + this.phase) * 0.12;
+          if (this.x < 0) this.x = window.innerWidth;
+          if (this.x > window.innerWidth) this.x = 0;
+          if (this.y < 0) this.y = window.innerHeight;
+          if (this.y > window.innerHeight) this.y = window.innerHeight;
+        } else {
+          this.vx *= 0.95;
+          this.vy *= 0.95;
+          this.vy += 0.08;
+          this.alpha -= this.fade;
+        }
+      }
+    }
+
+    // Initialize ambient embers
+    for (let i = 0; i < 30; i++) {
+      particles.push(new Particle());
+    }
+
+    function triggerSparkleBurst(x, y, count = 30) {
+      const colors = getParticleColors();
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 5 + 2;
+        const vx = Math.cos(angle) * speed;
+        const vy = Math.sin(angle) * speed - 1.5;
+        const size = Math.random() * 4 + 2;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const fade = 0.008 + Math.random() * 0.012;
+        particles.push(new Particle(x, y, vx, vy, size, color, 1.0, fade, true));
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      const currentTheme = document.body.getAttribute('data-theme');
+      ctx.globalCompositeOperation = currentTheme === 'dark' ? 'screen' : 'source-over';
+
+      particles = particles.filter(p => p.alpha > 0);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      const ambientCount = particles.filter(p => !p.burst).length;
+      if (ambientCount < 30) {
+        particles.push(new Particle(
+          Math.random() * window.innerWidth,
+          window.innerHeight + 10
+        ));
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    // Click canvas bursts
+    document.addEventListener('click', (e) => {
+      if (e.target.tagName !== 'BUTTON' && !e.target.closest('.menu-card') && e.target.tagName !== 'INPUT' && !e.target.closest('.controls')) {
+        triggerSparkleBurst(e.clientX, e.clientY, 10);
+      }
+    });
+
+    // Start on DOMContentLoaded
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      animate();
+    });
+  </script>
+</body>
+
+</html>
