@@ -626,7 +626,7 @@
         themeIcon.className = 'fa-solid fa-sun';
         localStorage.setItem('theme', 'light');
       }
-      triggerSparkleBurst(window.innerWidth / 2, window.innerHeight / 2, 15);
+      triggerSparkleBurst(window.innerWidth / 2, window.innerHeight / 2, 35);
     });
 
     // Particle Animation on Background Canvas
@@ -638,54 +638,133 @@
     function getParticleColors() {
       const currentTheme = document.body.getAttribute('data-theme');
       if (currentTheme === 'light') {
-        return ['#4f46e5', '#6366f1', '#3b82f6', '#06b6d4', '#ec4899'];
+        return ['#4f46e5', '#ff007f', '#00c2ff', '#10b981', '#f59e0b', '#ff6b00'];
       } else {
-        return ['#818cf8', '#a78bfa', '#60a5fa', '#34d399', '#fbbf24'];
+        return ['#818cf8', '#ff3399', '#38bdf8', '#4ade80', '#fbbf24', '#ff8800'];
       }
     }
 
     function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      ctx.scale(dpr, dpr);
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
     }
 
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
     class Particle {
-      constructor(x, y, vx, vy, size, color, alpha, fade) {
+      constructor(x, y, vx, vy, size, color, alpha, fade, burst) {
         const themeColors = getParticleColors();
-        this.x = x || Math.random() * canvas.width;
-        this.y = y || Math.random() * canvas.height;
+        this.x = x || Math.random() * window.innerWidth;
+        this.y = y || Math.random() * window.innerHeight;
         this.vx = vx !== undefined ? vx : (Math.random() - 0.5) * 1.5;
         this.vy = vy !== undefined ? vy : (Math.random() - 0.5) * 1.5;
         this.size = size || Math.random() * 3 + 1;
         this.color = color || themeColors[Math.floor(Math.random() * themeColors.length)];
-        this.alpha = alpha || Math.random() * 0.5 + 0.1;
+        this.baseAlpha = alpha || Math.random() * 0.35 + 0.15;
+        this.alpha = this.baseAlpha;
         this.fade = fade || 0.002 + Math.random() * 0.003;
+        this.phase = Math.random() * Math.PI * 2;
+        this.burst = burst || false;
+        this.history = [];
       }
 
       draw() {
+        // Draw trailing spark smoke lines for explosive firework effect
+        if (this.burst && this.history.length > 1) {
+          ctx.save();
+          ctx.globalAlpha = this.alpha * 0.35;
+          ctx.strokeStyle = this.color;
+          ctx.lineWidth = this.size * 0.45;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          ctx.beginPath();
+          ctx.moveTo(this.history[0].x, this.history[0].y);
+          for (let i = 1; i < this.history.length; i++) {
+            ctx.lineTo(this.history[i].x, this.history[i].y);
+          }
+          ctx.stroke();
+          ctx.restore();
+        }
+
         ctx.save();
-        ctx.globalAlpha = this.alpha;
-        ctx.fillStyle = this.color;
-        ctx.shadowBlur = this.size * 2;
-        ctx.shadowColor = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
+        let drawAlpha = this.alpha;
+        if (this.burst && this.alpha < 0.6) {
+          // Rapid organic flickering/twinkling as firework spark fades out
+          drawAlpha *= (Math.random() * 0.45 + 0.55);
+        }
+        ctx.globalAlpha = drawAlpha;
+        
+        if (this.burst) {
+          // 4-pointed star / Diamond shape sparkle (much more distinct and bright)
+          ctx.shadowBlur = this.size * 4;
+          ctx.shadowColor = this.color;
+          ctx.fillStyle = this.color;
+          
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y - this.size);
+          ctx.quadraticCurveTo(this.x, this.y, this.x + this.size, this.y);
+          ctx.quadraticCurveTo(this.x, this.y, this.x, this.y + this.size);
+          ctx.quadraticCurveTo(this.x, this.y, this.x - this.size, this.y);
+          ctx.quadraticCurveTo(this.x, this.y, this.x, this.y - this.size);
+          ctx.closePath();
+          ctx.fill();
+          
+          // White core center cross-flare line for extra bright sparkling glint
+          ctx.shadowBlur = 0;
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          ctx.moveTo(this.x - this.size * 0.75, this.y);
+          ctx.lineTo(this.x + this.size * 0.75, this.y);
+          ctx.moveTo(this.x, this.y - this.size * 0.75);
+          ctx.lineTo(this.x, this.y + this.size * 0.75);
+          ctx.stroke();
+
+          // White center core circle
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size * 0.3, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          // Ambient soft glowing bubble circle
+          ctx.shadowBlur = this.size * 3;
+          ctx.shadowColor = this.color;
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        
         ctx.restore();
       }
 
       update() {
+        // Record trail history for firework spark smoke
+        if (this.burst) {
+          this.history.push({ x: this.x, y: this.y });
+          if (this.history.length > 5) {
+            this.history.shift();
+          }
+        }
+
         this.x += this.vx;
         this.y += this.vy;
 
-        // Gentle bounds bounce for ambient particles
         if (!this.burst) {
-          if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-          if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+          // Soft twinkle effect (wobble size/opacity slightly)
+          this.alpha = this.baseAlpha + Math.sin(Date.now() * 0.004 + this.phase) * 0.12;
+          if (this.x < 0 || this.x > window.innerWidth) this.vx *= -1;
+          if (this.y < 0 || this.y > window.innerHeight) this.vy *= -1;
         } else {
+          // Friction deceleration & realistic gravity pull
+          this.vx *= 0.96;
+          this.vy *= 0.96;
+          this.vy += 0.12; // Gravity pulling sparks downwards
           this.alpha -= this.fade;
         }
       }
@@ -697,7 +776,11 @@
     }
 
     function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      // Set blend mode to screen in dark mode for extra glowing light overlay
+      const currentTheme = document.body.getAttribute('data-theme');
+      ctx.globalCompositeOperation = currentTheme === 'dark' ? 'screen' : 'source-over';
 
       // Update and draw particles
       particles = particles.filter(p => p.alpha > 0);
@@ -716,22 +799,23 @@
     }
     animate();
 
-    // Trigger explosive sparkle burst at a location
-    function triggerSparkleBurst(customX, customY, count = 25) {
+    // Trigger explosive sparkle burst at a location (firework physics)
+    function triggerSparkleBurst(customX, customY, count = 65) {
       const x = customX !== undefined ? customX : window.innerWidth / 2;
       const y = customY !== undefined ? customY : window.innerHeight / 2 - 50;
       const themeColors = getParticleColors();
 
       for (let i = 0; i < count; i++) {
         const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 4 + 2;
+        const speed = Math.random() * 8.5 + 2.5; // High initial velocity spread
         const vx = Math.cos(angle) * speed;
         const vy = Math.sin(angle) * speed;
-        const size = Math.random() * 4 + 2;
+        const size = Math.random() * 5 + 3.5;
         const color = themeColors[Math.floor(Math.random() * themeColors.length)];
 
-        const p = new Particle(x, y, vx, vy, size, color, 1.0, 0.015 + Math.random() * 0.01);
-        p.burst = true;
+        // Fade speed based on size to make it feel organic
+        const fade = 0.012 + Math.random() * 0.012;
+        const p = new Particle(x, y, vx, vy, size, color, 1.0, fade, true);
         particles.push(p);
       }
     }
@@ -740,7 +824,7 @@
     window.addEventListener('click', (e) => {
       // Don't burst on clicking controls or buttons
       if (e.target.closest('.controls') || e.target.closest('.btn') || e.target.closest('.card')) return;
-      triggerSparkleBurst(e.clientX, e.clientY, 10);
+      triggerSparkleBurst(e.clientX, e.clientY, 30);
     });
 
     // Gyroscope/Card Tilting Effect on Mousemove
@@ -840,7 +924,7 @@
         descEl.style.transform = 'translateY(0)';
 
         // Celebrate text change with sparkle effect at the center of the card
-        triggerSparkleBurst(window.innerWidth / 2, window.innerHeight / 2 - 50, 20);
+        triggerSparkleBurst(window.innerWidth / 2, window.innerHeight / 2 - 50, 45);
       }, 400);
     }
   </script>
