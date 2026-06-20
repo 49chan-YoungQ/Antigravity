@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>나의 첫 서비스</title>
+  <meta name="description" content="화면 중앙에 아름답게 빛나는 오늘도 힘내세요를 만나보세요.">
+
+  <!-- SEO & Favicon (Fallback to beautiful design) -->
+
+  <meta property="og:title" content="오늘도 힘내세요">
+  <meta property="og:description" content="화면 중앙에 아름답게 빛나는 오늘도 힘내세요를 만나보세요.">
+  <meta property="og:type" content="website">
+
+  <!-- Pretendard Font for premium Korean typography -->
+  <link rel="stylesheet" as="style" crossorigin
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      --card-bg: rgba(255, 255, 255, 0.45);
+      --card-border: rgba(255, 255, 255, 0.6);
+      --text-color: #1e293b;
+      --text-muted: #475569;
+      --accent-gradient: linear-gradient(135deg, #4ade80, #22c55e);
+      --accent-hover-gradient: linear-gradient(135deg, #166534, #14532d);
+      --glow-color: rgba(34, 197, 94, 0.15);
+      --shadow-color: rgba(15, 23, 42, 0.05);
+      --toast-bg: rgba(15, 23, 42, 0.9);
+      --toast-color: #ffffff;
+      --headline-gradient: linear-gradient(180deg, #14532d 0%, #064e3b 100%);
+      --headline-shadow: none;
+      --badge-bg: rgba(34, 197, 94, 0.08);
+      --badge-border: rgba(34, 197, 94, 0.2);
+      --badge-color: #15803d;
+      --btn-sec-bg: rgba(255, 255, 255, 0.6);
+      --btn-sec-border: rgba(15, 23, 42, 0.08);
+      --btn-sec-hover-bg: rgba(255, 255, 255, 0.85);
+      --control-hover-bg: rgba(255, 255, 255, 0.7);
+      --glow-1-color: #bbf7d0;
+      --glow-2-color: #86efac;
+      --glow-opacity: 0.55;
+      --glow-blend: multiply;
+      --glow-filter: blur(100px);
+      --card-inset-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      --footer-bg: #f8fafc;
+      --footer-text: #64748b;
+      --footer-border: rgba(15, 23, 42, 0.06);
+      --btn-text: #ffffff;
+    }
+
+    [data-theme="dark"] {
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      --card-bg: rgba(15, 23, 42, 0.45);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-color: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-gradient: linear-gradient(135deg, #86efac, #4ade80);
+      --accent-hover-gradient: linear-gradient(135deg, #0f5132, #064e3b);
+      --glow-color: rgba(74, 222, 128, 0.2);
+      --shadow-color: rgba(0, 0, 0, 0.4);
+      --toast-bg: rgba(255, 255, 255, 0.95);
+      --toast-color: #0f172a;
+      --headline-gradient: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+      --headline-shadow: 0 0 20px rgba(74, 222, 128, 0.15);
+      --badge-bg: rgba(74, 222, 128, 0.15);
+      --badge-border: rgba(74, 222, 128, 0.3);
+      --badge-color: #86efac;
+      --btn-sec-bg: rgba(255, 255, 255, 0.05);
+      --btn-sec-border: rgba(255, 255, 255, 0.08);
+      --btn-sec-hover-bg: rgba(255, 255, 255, 0.1);
+      --control-hover-bg: rgba(255, 255, 255, 0.1);
+      --glow-1-color: #14532d;
+      --glow-2-color: #022c22;
+      --glow-opacity: 0.3;
+      --glow-blend: screen;
+      --glow-filter: blur(120px);
+      --card-inset-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      --footer-bg: #1e293b;
+      --footer-text: #94a3b8;
+      --footer-border: rgba(255, 255, 255, 0.06);
+      --btn-text: #064e3b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: auto;
+      position: relative;
+      transition: background 0.6s ease, color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    header {
+      background: linear-gradient(135deg, #14532d, #022c22);
+      color: #ffffff;
+      width: 100%;
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(20, 83, 45, 0.2);
+      z-index: 10;
+      position: relative;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0;
+    }
+
+    header nav {
+      display: flex;
+      gap: 24px;
+    }
+
+    header nav a {
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    header nav a:hover {
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    main.app-main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding: 40px 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Ambient Background Glows */
+    .glow-sphere {
+      position: absolute;
+      border-radius: 50%;
+      filter: var(--glow-filter);
+      z-index: 1;
+      pointer-events: none;
+      opacity: var(--glow-opacity);
+      mix-blend-mode: var(--glow-blend);
+      transition: all 0.8s ease;
+    }
+
+    .glow-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, var(--glow-1-color) 0%, transparent 70%);
+      top: -10%;
+      left: -10%;
+      animation: float-1 25s infinite alternate ease-in-out;
+    }
+
+    .glow-2 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--glow-2-color) 0%, transparent 70%);
+      bottom: -15%;
+      right: -10%;
+      animation: float-2 30s infinite alternate ease-in-out;
+    }
+
+    @keyframes float-1 {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      50% {
+        transform: translate(100px, 80px) scale(1.2);
+      }
+
+      100% {
+        transform: translate(-50px, 150px) scale(0.9);
+      }
+    }
+
+    @keyframes float-2 {
+      0% {
+        transform: translate(0, 0) scale(1.1);
+      }
+
+      50% {
+        transform: translate(-120px, -70px) scale(0.85);
+      }
+
+      100% {
+        transform: translate(80px, -150px) scale(1.25);
+      }
+    }
+
+    /* Particle Canvas */
+    #particle-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* Outer Wrapper for centered position */
+    .app-container {
+      position: relative;
+      z-index: 10;
+      width: 90%;
+      max-width: 680px;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      animation: fade-in-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fade-in-up {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Glowing Glass Card */
+    .card {
+      width: 100%;
+      background: var(--card-bg);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid var(--card-border);
+      border-radius: 32px;
+      padding: 60px 40px;
+      box-shadow:
+        0 20px 50px var(--shadow-color),
+        var(--card-inset-shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition:
+        transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        box-shadow 0.5s ease,
+        background-color 0.6s ease,
+        border-color 0.6s ease;
+    }
+
+    /* Accent Glow on Hover */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 32px;
+      padding: 2px;
+      background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      transition: opacity 0.5s;
+      opacity: 0.5;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow:
+        0 30px 60px var(--shadow-color),
+        0 0 50px var(--glow-color);
+    }
+
+    .card:hover::before {
+      background: var(--accent-gradient);
+      opacity: 1;
+    }
+
+    /* Badge/Tag */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--badge-color);
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.03);
+        opacity: 0.9;
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    /* The Main Statement */
+    .headline {
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1.35;
+      letter-spacing: -0.03em;
+      margin-bottom: 25px;
+      word-break: keep-all;
+      background: var(--headline-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(var(--headline-shadow, 0 0 0 transparent));
+      transition: font-size 0.3s ease, opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    @keyframes shine {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 16px 20px;
+      }
+
+      header h1 {
+        font-size: 1.2rem;
+      }
+
+      header nav {
+        gap: 16px;
+      }
+
+      header nav a {
+        font-size: 0.85rem;
+      }
+
+      .headline {
+        font-size: 32px;
+      }
+
+      .card {
+        padding: 40px 24px;
+      }
+
+      .review-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+      }
+
+      .profile-img {
+        width: 48px;
+        height: 48px;
+      }
+    }
+
+    /* Subtext description */
+    .description {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 480px;
+      line-height: 1.6;
+      margin-bottom: 35px;
+      font-weight: 400;
+      transition: color 0.6s ease, opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    /* Action Buttons Area */
+    .button-group {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 16px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      border: none;
+      outline: none;
+      text-decoration: none;
+    }
+
+    .btn-primary,
+    .btn-yellow,
+    .btn-blue,
+    .btn-red,
+    .btn-gray {
+      background: var(--accent-gradient);
+      color: var(--btn-text, #ffffff);
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.2);
+      background-size: 200% auto;
+    }
+
+    .btn-primary:hover,
+    .btn-yellow:hover,
+    .btn-blue:hover,
+    .btn-red:hover,
+    .btn-gray:hover {
+      background: var(--accent-hover-gradient);
+      color: #ffffff;
+      background-position: right center;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(20, 83, 45, 0.35);
+    }
+
+    .btn-primary:active,
+    .btn-yellow:active,
+    .btn-blue:active,
+    .btn-red:active,
+    .btn-gray:active {
+      transform: translateY(0);
+    }
+
+    .btn-yellow,
+    .btn-blue,
+    .btn-red,
+    .btn-gray {
+      margin-bottom: 25px;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .btn-secondary {
+      background: var(--btn-sec-bg);
+      border: 1px solid var(--btn-sec-border);
+      color: var(--text-color);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: var(--btn-sec-hover-bg);
+      border-color: var(--card-border);
+      transform: translateY(-2px);
+    }
+
+    /* Floating Utilities */
+    .controls {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      display: flex;
+      gap: 12px;
+      z-index: 100;
+    }
+
+    .control-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-color);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .control-btn:hover {
+      transform: scale(1.1) rotate(10deg);
+      background: var(--control-hover-bg);
+      border-color: var(--card-border);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: -80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--toast-bg);
+      backdrop-filter: blur(12px);
+      color: var(--toast-color);
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+      transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+      opacity: 0;
+      border: 1px solid var(--card-border);
+    }
+
+    .toast.show {
+      bottom: 40px;
+      opacity: 1;
+    }
+
+    /* Footer copyright note */
+    footer.app-footer {
+      background: var(--footer-bg);
+      color: var(--footer-text);
+      width: 100%;
+      padding: 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-top: 1px solid var(--footer-border);
+      z-index: 10;
+      position: relative;
+      opacity: 1;
+      letter-spacing: 0.02em;
+      transition: background 0.6s ease, color 0.6s ease, border-color 0.6s ease;
+    }
+
+    /* Section Styles */
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 25px;
+      color: var(--badge-color);
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Review Styles */
+    .reviews-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+    }
+
+    .review-card {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 20px;
+      padding: 20px;
+      text-align: left;
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    [data-theme="dark"] .review-card {
+      background: rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .review-card:hover {
+      transform: translateX(6px) translateY(-2px);
+      background: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.03);
+    }
+
+    [data-theme="dark"] .review-card:hover {
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .profile-img {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--card-border);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+    }
+
+    .review-card:hover .profile-img {
+      transform: scale(1.05) rotate(3deg);
+    }
+
+    .review-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .review-text {
+      font-size: 0.95rem;
+      color: var(--text-color);
+      line-height: 1.5;
+      font-weight: 500;
+    }
+
+    .reviewer-name {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Background Decorative Glowing Spheres -->
+  <div class="glow-sphere glow-1"></div>
+  <div class="glow-sphere glow-2"></div>
+
+  <!-- Interactive Background Canvas for subtle particles -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- Main Utility Controls -->
+  <div class="controls">
+    <button class="control-btn" id="theme-toggle" title="테마 변경" aria-label="Toggle theme">
+      <i class="fa-solid fa-moon"></i>
+    </button>
+  </div>
+
+  <header>
+    <h1>나의 첫 서비스</h1>
+    <nav>
+      <a href="#intro">소개</a>
+      <a href="#features">기능</a>
+      <a href="#menu">메뉴</a>
+    </nav>
+  </header>
+
+  <!-- App Wrapper -->
+  <main class="app-main">
+    <div class="app-container">
+      <!-- Section 1: 핵심 기능 소개 -->
+      <section class="card" id="main-card">
+        <h2 class="section-title">
+          <i class="fa-solid fa-star"></i> 핵심 기능 소개
+        </h2>
+
+        <div class="badge" id="idea-badge">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Project Day 2</span>
+        </div>
+
+        <h1 class="headline" id="main-headline">
+          오늘도 힘내세요
+        </h1>
+
+        <p class="description">
+          지치고 힘든 하루 속에서도 따뜻한 응원의 한 마디가 화면 한가운데서 아름답게 빛납니다. 오늘도 당신의 하루가 행복으로 가득하길 바랍니다.
+        </p>
+
+        <button class="btn btn-yellow" id="next-btn" onclick="showNextSentence()">
+          <i class="fa-solid fa-forward"></i> 다음 문장 보기
+        </button>
+
+        <div class="button-group">
+          <button class="btn btn-primary" id="copy-btn" onclick="copyText()">
+            <i class="fa-regular fa-copy"></i> 문장 복사하기
+          </button>
+          <button class="btn btn-secondary" id="sparkle-btn" onclick="triggerSparkleBurst()">
+            <i class="fa-solid fa-sparkles"></i> 반짝임 효과
+          </button>
+        </div>
+      </section>
+
+      <!-- Section 2: 사용자 후기 -->
+      <section class="card" id="reviews-section">
+        <h2 class="section-title">
+          <i class="fa-solid fa-comments"></i> 사용자 후기
+        </h2>
+        <div class="reviews-container">
+          <div class="review-card">
+            <img src="images/user_profile_1.png" alt="김민수 프로필" class="profile-img">
+            <div class="review-content">
+              <p class="review-text">"디자인이 매우 트렌디하고, 글래스모피즘 효과가 고급스러워요. 문장을 클릭할 때 터지는 불꽃 이펙트가 마음에 힐링을 주네요."</p>
+              <span class="reviewer-name">김민수 / 백엔드 개발자</span>
+            </div>
+          </div>
+          <div class="review-card">
+            <img src="images/user_profile_2.png" alt="이지원 프로필" class="profile-img">
+            <div class="review-content">
+              <p class="review-text">"모바일에서도 막힘없이 부드러운 반응성이 일품입니다. 따뜻한 문장들과 정성스러운 피드백 덕분에 매일 힘을 얻어갑니다!"</p>
+              <span class="reviewer-name">이지원 / UI/UX 디자이너</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    &copy; 2026 49chan Service
+  </footer>
+
+  <!-- Toast alert element -->
+  <div class="toast" id="toast">
+    <i class="fa-solid fa-circle-check" style="color: #10b981;"></i>
+    <span>클립보드에 문장이 복사되었습니다!</span>
+  </div>
+
+  <script>
+    // Theme Switcher Logic
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = themeToggle.querySelector('i');
+
+    // Check saved theme or system preference
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme === 'light' || (!savedTheme && !prefersDark)) {
+      document.body.setAttribute('data-theme', 'light');
+      themeIcon.className = 'fa-solid fa-sun';
+    } else {
+      document.body.setAttribute('data-theme', 'dark');
+      themeIcon.className = 'fa-solid fa-moon';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = document.body.getAttribute('data-theme');
+      if (currentTheme === 'light') {
+        document.body.setAttribute('data-theme', 'dark');
+        themeIcon.className = 'fa-solid fa-moon';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.body.setAttribute('data-theme', 'light');
+        themeIcon.className = 'fa-solid fa-sun';
+        localStorage.setItem('theme', 'light');
+      }
+      triggerSparkleBurst(window.innerWidth / 2, window.innerHeight / 2, 35);
+    });
+
+    // Particle Animation on Background Canvas
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let particles = [];
+    
+    function getParticleColors() {
+      const currentTheme = document.body.getAttribute('data-theme');
+      if (currentTheme === 'light') {
+        return ['#22c55e', '#15803d', '#4ade80', '#14532d', '#86efac', '#064e3b'];
+      } else {
+        return ['#4ade80', '#86efac', '#a7f3d0', '#059669', '#10b981', '#34d399'];
+      }
+    }
+
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      ctx.scale(dpr, dpr);
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor(x, y, vx, vy, size, color, alpha, fade, burst) {
+        const themeColors = getParticleColors();
+        this.x = x || Math.random() * window.innerWidth;
+        this.y = y || Math.random() * window.innerHeight;
+        this.vx = vx !== undefined ? vx : (Math.random() - 0.5) * 1.5;
+        this.vy = vy !== undefined ? vy : (Math.random() - 0.5) * 1.5;
+        this.size = size || Math.random() * 3 + 1;
+        this.color = color || themeColors[Math.floor(Math.random() * themeColors.length)];
+        this.baseAlpha = alpha || Math.random() * 0.35 + 0.15;
+        this.alpha = this.baseAlpha;
+        this.fade = fade || 0.002 + Math.random() * 0.003;
+        this.phase = Math.random() * Math.PI * 2;
+        this.burst = burst || false;
+        this.history = [];
+      }
+
+      draw() {
+        // Draw trailing spark smoke lines for explosive firework effect
+        if (this.burst && this.history.length > 1) {
+          ctx.save();
+          ctx.globalAlpha = this.alpha * 0.35;
+          ctx.strokeStyle = this.color;
+          ctx.lineWidth = this.size * 0.45;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          ctx.beginPath();
+          ctx.moveTo(this.history[0].x, this.history[0].y);
+          for (let i = 1; i < this.history.length; i++) {
+            ctx.lineTo(this.history[i].x, this.history[i].y);
+          }
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        ctx.save();
+        let drawAlpha = this.alpha;
+        if (this.burst && this.alpha < 0.6) {
+          // Rapid organic flickering/twinkling as firework spark fades out
+          drawAlpha *= (Math.random() * 0.45 + 0.55);
+        }
+        ctx.globalAlpha = drawAlpha;
+        
+        if (this.burst) {
+          // 4-pointed star / Diamond shape sparkle (much more distinct and bright)
+          ctx.shadowBlur = this.size * 4;
+          ctx.shadowColor = this.color;
+          ctx.fillStyle = this.color;
+          
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y - this.size);
+          ctx.quadraticCurveTo(this.x, this.y, this.x + this.size, this.y);
+          ctx.quadraticCurveTo(this.x, this.y, this.x, this.y + this.size);
+          ctx.quadraticCurveTo(this.x, this.y, this.x - this.size, this.y);
+          ctx.quadraticCurveTo(this.x, this.y, this.x, this.y - this.size);
+          ctx.closePath();
+          ctx.fill();
+          
+          // White core center cross-flare line for extra bright sparkling glint
+          ctx.shadowBlur = 0;
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          ctx.moveTo(this.x - this.size * 0.75, this.y);
+          ctx.lineTo(this.x + this.size * 0.75, this.y);
+          ctx.moveTo(this.x, this.y - this.size * 0.75);
+          ctx.lineTo(this.x, this.y + this.size * 0.75);
+          ctx.stroke();
+
+          // White center core circle
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size * 0.3, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          // Ambient soft glowing bubble circle
+          ctx.shadowBlur = this.size * 3;
+          ctx.shadowColor = this.color;
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        
+        ctx.restore();
+      }
+
+      update() {
+        // Record trail history for firework spark smoke
+        if (this.burst) {
+          this.history.push({ x: this.x, y: this.y });
+          if (this.history.length > 5) {
+            this.history.shift();
+          }
+        }
+
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (!this.burst) {
+          // Soft twinkle effect (wobble size/opacity slightly)
+          this.alpha = this.baseAlpha + Math.sin(Date.now() * 0.004 + this.phase) * 0.12;
+          if (this.x < 0 || this.x > window.innerWidth) this.vx *= -1;
+          if (this.y < 0 || this.y > window.innerHeight) this.vy *= -1;
+        } else {
+          // Friction deceleration & realistic gravity pull
+          this.vx *= 0.96;
+          this.vy *= 0.96;
+          this.vy += 0.12; // Gravity pulling sparks downwards
+          this.alpha -= this.fade;
+        }
+      }
+    }
+
+    // Initialize ambient particles
+    for (let i = 0; i < 40; i++) {
+      particles.push(new Particle());
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      // Set blend mode to screen in dark mode for extra glowing light overlay
+      const currentTheme = document.body.getAttribute('data-theme');
+      ctx.globalCompositeOperation = currentTheme === 'dark' ? 'screen' : 'source-over';
+
+      // Update and draw particles
+      particles = particles.filter(p => p.alpha > 0);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      // Refill ambient particles if too few
+      const ambientCount = particles.filter(p => !p.burst).length;
+      if (ambientCount < 40) {
+        particles.push(new Particle());
+      }
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Trigger explosive sparkle burst at a location (firework physics)
+    function triggerSparkleBurst(customX, customY, count = 65) {
+      const x = customX !== undefined ? customX : window.innerWidth / 2;
+      const y = customY !== undefined ? customY : window.innerHeight / 2 - 50;
+      const themeColors = getParticleColors();
+
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 8.5 + 2.5; // High initial velocity spread
+        const vx = Math.cos(angle) * speed;
+        const vy = Math.sin(angle) * speed;
+        const size = Math.random() * 5 + 3.5;
+        const color = themeColors[Math.floor(Math.random() * themeColors.length)];
+
+        // Fade speed based on size to make it feel organic
+        const fade = 0.012 + Math.random() * 0.012;
+        const p = new Particle(x, y, vx, vy, size, color, 1.0, fade, true);
+        particles.push(p);
+      }
+    }
+
+    // Handle interactive clicks on page
+    window.addEventListener('click', (e) => {
+      // Don't burst on clicking controls or buttons
+      if (e.target.closest('.controls') || e.target.closest('.btn') || e.target.closest('.card')) return;
+      triggerSparkleBurst(e.clientX, e.clientY, 30);
+    });
+
+    // Gyroscope/Card Tilting Effect on Mousemove
+    const card = document.getElementById('main-card');
+    document.addEventListener('mousemove', (e) => {
+      const xAxis = (window.innerWidth / 2 - e.clientX) / 35;
+      const yAxis = (window.innerHeight / 2 - e.clientY) / 35;
+      card.style.transform = `rotateY(${xAxis}deg) rotateX(${-yAxis}deg) translateY(-5px)`;
+    });
+
+    document.addEventListener('mouseleave', () => {
+      card.style.transform = 'rotateY(0deg) rotateX(0deg) translateY(0)';
+    });
+
+    // Copy to clipboard logic
+    function copyText() {
+      const textToCopy = document.getElementById('main-headline').innerText.trim();
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        showToast();
+        triggerSparkleBurst();
+      }).catch(err => {
+        console.error('클립보드 복사 실패:', err);
+      });
+    }
+
+    // Toast alert presentation
+    function showToast() {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    // Sentences Pool for Encouraging Quotes
+    const sentences = [
+      {
+        headline: "오늘도 힘내세요",
+        description: "지치고 힘든 하루 속에서도 따뜻한 응원의 한 마디가 화면 한가운데서 아름답게 빛납니다. 오늘도 당신의 하루가 행복으로 가득하길 바랍니다."
+      },
+      {
+        headline: "당신은 존재만으로 빛나요",
+        description: "다른 사람의 시선에 흔들리지 마세요. 당신은 그 자체로 충분히 소중하며, 세상에 단 하나뿐인 가장 아름다운 보석입니다."
+      },
+      {
+        headline: "포기하지 않는 마음",
+        description: "지금 겪고 있는 어둠은 곧 다가올 눈부신 아침을 향해 가는 과정일 뿐입니다. 조금만 더 힘을 내면 찬란한 빛이 당신을 맞이할 거예요."
+      },
+      {
+        headline: "오늘 하루도 수고 많았어요",
+        description: "누구보다 열심히 달렸을 당신의 하루를 위로합니다. 오늘 밤은 모든 걱정을 내려놓고, 편안하고 따뜻한 꿈을 꾸길 바랄게요."
+      },
+      {
+        headline: "늘 당신을 응원합니다",
+        description: "보이지 않는 곳에서도 늘 당신을 아끼고 지지하는 마음들이 곁에 있습니다. 당신이 걸어가는 모든 발걸음마다 행복이 가득하길 응원해요."
+      }
+    ];
+
+    let currentSentenceIndex = 0;
+
+    function showNextSentence() {
+      const headlineEl = document.getElementById('main-headline');
+      const descEl = document.querySelector('.description');
+
+      currentSentenceIndex = (currentSentenceIndex + 1) % sentences.length;
+      const nextData = sentences[currentSentenceIndex];
+
+      // Fade out
+      headlineEl.style.opacity = 0;
+      descEl.style.opacity = 0;
+      headlineEl.style.transform = 'translateY(-10px)';
+      descEl.style.transform = 'translateY(10px)';
+
+      setTimeout(() => {
+        // Change text
+        headlineEl.innerText = nextData.headline;
+        descEl.innerText = nextData.description;
+
+        // Change button color dynamically based on headline
+        const btn = document.getElementById('next-btn');
+        btn.classList.remove('btn-yellow', 'btn-blue', 'btn-red', 'btn-gray');
+
+        if (nextData.headline === "당신은 존재만으로 빛나요" || nextData.headline === "늘 당신을 응원합니다") {
+          btn.classList.add('btn-blue');
+        } else if (nextData.headline === "포기하지 않는 마음") {
+          btn.classList.add('btn-red');
+        } else if (nextData.headline === "오늘 하루도 수고 많았어요") {
+          btn.classList.add('btn-gray');
+        } else {
+          btn.classList.add('btn-yellow');
+        }
+
+        // Fade in
+        headlineEl.style.opacity = 1;
+        descEl.style.opacity = 1;
+        headlineEl.style.transform = 'translateY(0)';
+        descEl.style.transform = 'translateY(0)';
+
+        // Celebrate text change with sparkle effect at the center of the card
+        triggerSparkleBurst(window.innerWidth / 2, window.innerHeight / 2 - 50, 45);
+      }, 400);
+    }
+  </script>
+</body>
+
+</html>
